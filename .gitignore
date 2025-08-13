@@ -1,5 +1,6 @@
 # Ignore app config settings
 appsettings.Development.json
+Properties/launchSettings.json 
 
 # Ignore build output and other generated files
 **/bin/
