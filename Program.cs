@@ -10,7 +10,7 @@ using static System.Net.WebRequestMethods;
 // Load baseUrl and Api key/ Teamwork password
 string baseUrl = ConfigManager.Settings.Teamwork.BaseUrl;
 string? apiToken = Environment.GetEnvironmentVariable("apiKey");
-string? teamworkPassword = Environment.GetEnvironmentVariable("teamworkPassword");
+string? teamworkPassword = Environment.GetEnvironmentVariable("teamworkPass");
 
 if (string.IsNullOrEmpty(apiToken))
 {
@@ -37,7 +37,7 @@ List<string> topLevelTasklistId = new List<string>();
 
 try
 {
-    // GET request
+    // GET request - Top level task Id's
     using (var response = await httpClient.GetAsync(projectUrl))
     { // using bracket to dispose once data fetched. Wrapping all means that even if parsing fails, or an exception is thrown, the response will be disposed immediately.
 
@@ -68,38 +68,35 @@ try
         }
     }
 
-    // Loop through each tasklist Id'sand fetch data
+    // Loop through each tasklist Id's and fetch data
     foreach (var tasklistId in topLevelTasklistId)
     {
         // Build string 
         string tasksUrl = $"{baseUrl}" + $"/tasklists/{tasklistId}/tasks.json";
 
-        using var response = await httpClient.GetAsync(projectUrl);
+        using var response = await httpClient.GetAsync(tasksUrl);
         response.EnsureSuccessStatusCode();
 
         // Read JSON file
         using var stream = await response.Content.ReadAsStreamAsync();
         var jsonDoc = await JsonDocument.ParseAsync(stream);
+               
+        foreach (var task in jsonDoc.RootElement.GetProperty("todo-items").EnumerateArray())
+        {
+            string taskName = task.GetProperty("content").GetString();
+            string taskPriority = task.GetProperty("priority").GetString();
+            Console.WriteLine($"Task: {taskName}, priority: {taskPriority}");
 
-        //foreach (var task in jsonDoc.RootElement.GetProperty("tasks").EnumerateArray())
-        //{
-        //}
-
-        //foreach(var task in jsonDoc.RootElement.GetProperty("tasks").EnumerateArray())
-        //{
-        //        string taskName = task.GetProperty("content").GetString();
-        //        Console.WriteLine($"Task: {taskName}");
-
-        //        // Optional: subtasks
-        //        if (task.TryGetProperty("subtasks", out JsonElement subtasks))
-        //        {
-        //            foreach (var subtask in subtasks.EnumerateArray())
-        //            {
-        //                string subtaskName = subtask.GetProperty("content").GetString();
-        //                Console.WriteLine($"  Subtask: {subtaskName}");
-        //            }
-        //        }
-        //    }
+            // Optional: subtasks
+            //if (task.TryGetProperty("subtasks", out JsonElement subtasks))
+            //{
+            //    foreach (var subtask in subtasks.EnumerateArray())
+            //    {
+            //        string subtaskName = subtask.GetProperty("content").GetString();
+            //        Console.WriteLine($"  Subtask: {subtaskName}");
+            //    }
+            //}
+        }
     }
 
 }
