@@ -24,6 +24,7 @@ long projectID = ConfigManager.Settings.Teamwork.ProjectsIds[0];
 // HTTP Client
 using var httpClient = new HttpClient();
 
+// Basic Auth
 var tokenBytes = System.Text.Encoding.UTF8.GetBytes($"{apiToken}:{teamworkPassword}");
 var tokenBase64 = Convert.ToBase64String(tokenBytes);
 httpClient.DefaultRequestHeaders.Authorization =
@@ -45,18 +46,13 @@ try
 
         // Read JSON file
         using var stream = await response.Content.ReadAsStreamAsync();
+
+        // Taking the raw response stream (which is text in JSON format) and parsing it into a structured object (JsonDocument). To access properties dynamically when you're not using C# classes
         var jsonDoc = await JsonDocument.ParseAsync(stream);
-    
+
+        // jsonDoc.RootElement lets you start navigating from the top of the JSON.
         var root = jsonDoc.RootElement;
-
-        //string formattedJson = JsonSerializer.Serialize(json.RootElement, new JsonSerializerOptions
-        //{
-        //    WriteIndented = true
-        //});
-
-        //Console.WriteLine(formattedJson);
-
-        
+                
         if (root.TryGetProperty("tasklists", out JsonElement tasklists))
         {
             foreach (var tasklist in tasklists.EnumerateArray())
@@ -68,7 +64,22 @@ try
         }
     }
 
-    // Loop through each tasklist Id's and fetch data
+    /*
+        * If you're dealing with known JSON shapes, using C# model classes with JsonSerializer.Deserialize<T>() is cleaner and easier to maintain and you do not need to manually use:
+
+            JsonDocument.ParseAsync(...)
+
+            .RootElement
+
+            TryGetProperty(...)
+
+            .GetString() manually for each property
+
+        * But for generic or flexible JSON (like API responses that change or are not 100% known, JSON is dynamic, unknown, or partial), using JsonDocument gives more control.
+     
+     */
+
+    // Loop through each task list Id's and fetch data
     foreach (var tasklistId in topLevelTasklistId)
     {
         // Build string 
@@ -79,6 +90,7 @@ try
 
         // Read JSON file
         using var stream = await response.Content.ReadAsStreamAsync();
+        
         var jsonDoc = await JsonDocument.ParseAsync(stream);
                
         foreach (var task in jsonDoc.RootElement.GetProperty("todo-items").EnumerateArray())

@@ -6,7 +6,7 @@ namespace TeamworkWeeklyReport.Services
     // Non static ConfigManager because a static class cannot have any instance members.
     public class ConfigManager
     {
-        // Instead I use static Constructor and static memebers for more future flexibliity
+        // Instead I use static Constructor and static members for more future flexibility
         private static readonly IConfigurationRoot _configuration;
         private static readonly AppSettings _appSettings;
 
