@@ -26,86 +26,94 @@ if (string.IsNullOrEmpty(teamworkPassword))
 }
 
 // Project ID
-long projectID = ConfigManager.Settings.Teamwork.ProjectsIds[0];
+List<long> projectsIds = ConfigManager.Settings.Teamwork.ProjectsIds;
 
 using var httpClient = new HttpClient();
 
 // Basic Auth
 BasicAuth.SetTeamworkBasicAuth(teamworkPassword, apiToken, httpClient);
-//var tokenBytes = System.Text.Encoding.UTF8.GetBytes($"{apiToken}:{teamworkPassword}");
-//var tokenBase64 = Convert.ToBase64String(tokenBytes);
-//httpClient.DefaultRequestHeaders.Authorization =
-//    new AuthenticationHeaderValue("Basic", tokenBase64);
 
-// Build string 
-string projectUrl = $"{baseUrl}/projects/{projectID}/tasklists.json";
-
-// Top level task Id's
-List<string> topLevelTasklistId = new List<string>();
-
-try
+foreach (var projectId in projectsIds)
 {
-    // GET request - Top level task Id's
-    using (var response = await httpClient.GetAsync(projectUrl))
-    { 
-        response.EnsureSuccessStatusCode();
+    
 
-        // Read JSON file
-        using var stream = await response.Content.ReadAsStreamAsync();
-       
-        var jsonDoc = await JsonDocument.ParseAsync(stream);
-       
-      
 
-        var root = jsonDoc.RootElement;
-                
-        if (root.TryGetProperty("tasklists", out JsonElement tasklists))
-        {
-            foreach (var tasklist in tasklists.EnumerateArray())
+    // Build string 
+    string projectUrl = $"{baseUrl}/projects/{projectId}/tasklists.json";
+
+    // Top level task Id's
+    List<string> topLevelTasklistId = new List<string>();
+
+    try
+    {
+        // GET request - Top level task Id's
+        using (var response = await httpClient.GetAsync(projectUrl))
+        { 
+            response.EnsureSuccessStatusCode();
+
+            // Read JSON file
+            using var stream = await response.Content.ReadAsStreamAsync();
+       
+            var tasklistsResponse = await JsonSerializer.DeserializeAsync<TaskListsResponse>(stream);
+
+            if(tasklistsResponse?.TasksLists == null){
+
+                Console.WriteLine($"No task lists found.");
+                continue;
+            }
+
+            foreach (var task in tasklistsResponse.TasksLists)
             {
-                string? id = tasklist.GetProperty("id").GetString();
+                string? id = task.Id;
                 topLevelTasklistId.Add(id);
                 Console.WriteLine($"Top level Task found {id}");
             }
         }
-    }
 
-    // Loop through each task list Id's and fetch data
-    foreach (var tasklistId in topLevelTasklistId)
-    {
-        // Build string 
-        string tasksUrl = $"{baseUrl}" + $"/tasklists/{tasklistId}/tasks.json";
-
-        using var response = await httpClient.GetAsync(tasksUrl);
-        response.EnsureSuccessStatusCode();
-
-        // Read JSON file
-        using var stream = await response.Content.ReadAsStreamAsync();
-        
-        var jsonDoc = await JsonDocument.ParseAsync(stream);
-               
-        foreach (var task in jsonDoc.RootElement.GetProperty("todo-items").EnumerateArray())
+        // Loop through each task list Id's and fetch data
+        foreach (var tasklistId in topLevelTasklistId)
         {
-            string taskName = task.GetProperty("content").GetString();
-            string taskPriority = task.GetProperty("priority").GetString();
-            Console.WriteLine($"Task: {taskName}, priority: {taskPriority}");
+            // Build string 
+            string tasksUrl = $"{baseUrl}" + $"/projects/api/v3/tasklists/{tasklistId}/tasks.json";
 
-            // Optional: subtasks
-            //if (task.TryGetProperty("subtasks", out JsonElement subtasks))
-            //{
-            //    foreach (var subtask in subtasks.EnumerateArray())
-            //    {
-            //        string subtaskName = subtask.GetProperty("content").GetString();
-            //        Console.WriteLine($"  Subtask: {subtaskName}");
-            //    }
-            //}
+            using var response = await httpClient.GetAsync(tasksUrl);
+            response.EnsureSuccessStatusCode();
+
+            // Read JSON file
+            using var stream = await response.Content.ReadAsStreamAsync();
+
+            var TasksResponse = await JsonSerializer.DeserializeAsync<TasksResponse>(stream);
+
+            if (TasksResponse?.Tasks == null)
+            {
+                Console.WriteLine($"No tasks found.");
+                continue;
+            }
+
+            foreach (var task in TasksResponse.Tasks)
+            {
+                string taskName = task.Name;
+                string taskPriority = task.Priority;
+                Console.WriteLine($"Task: {taskName}, priority: {taskPriority}");
+
+                //    // Optional: subtasks
+                //    //if (task.TryGetProperty("subtasks", out JsonElement subtasks))
+                //    //{
+                //    //    foreach (var subtask in subtasks.EnumerateArray())
+                //    //    {
+                //    //        string subtaskName = subtask.GetProperty("content").GetString();
+                //    //        Console.WriteLine($"  Subtask: {subtaskName}");
+                //    //    }
+                //    //}
+                //}
+            }
+
         }
     }
-
-}
-catch (Exception ex)
-{
-    Console.WriteLine("Error: " + ex.Message);
-    throw;
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error: " + ex.Message);
+        throw;
+    }
 }
 Console.ReadLine();
