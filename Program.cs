@@ -26,94 +26,105 @@ if (string.IsNullOrEmpty(teamworkPassword))
 }
 
 // Project ID
-List<long> projectsIds = ConfigManager.Settings.Teamwork.ProjectsIds;
+//List<long> projectsIds = ConfigManager.Settings.Teamwork.ProjectsIds;
 
 using var httpClient = new HttpClient();
 
 // Basic Auth
 BasicAuth.SetTeamworkBasicAuth(teamworkPassword, apiToken, httpClient);
 
-foreach (var projectId in projectsIds)
+try
 {
+    // Total active projects
+    int activeProjects = 0;
+     
+    string projectsStatsUrl = $"{baseUrl}/projects/api/v3/projects/metrics/active.json";
+
+    // GET all projects stats
+    using (var response = await httpClient.GetAsync(projectsStatsUrl)){
+        response.EnsureSuccessStatusCode();
+
+        // Read the content from the server and returned as a string
+        // "using" avoids loading the entire response into memory as a string first.
+        using var stream = await response.Content.ReadAsStreamAsync();
+        
+        var projectsStatsResponse = await JsonSerializer.DeserializeAsync<ProjectsStatsResponse>(stream);
+
+        if(projectsStatsResponse?.Data == null){
+            Console.WriteLine("No information about projects found.");
+            return;
+        }
+
+        activeProjects = projectsStatsResponse.Data.Value;
+               
+    }
     
+    
+    string projectsUrl = $"{baseUrl}/projects/api/v3/projects.json?pageSize={activeProjects}";
+    // List of Projects Id's
+    List<long> projectsIds = new List<long>();
 
-
-    // Build string 
-    string projectUrl = $"{baseUrl}/projects/{projectId}/tasklists.json";
-
-    // Top level task Id's
-    List<string> topLevelTasklistId = new List<string>();
-
-    try
-    {
-        // GET request - Top level task Id's
-        using (var response = await httpClient.GetAsync(projectUrl))
-        { 
-            response.EnsureSuccessStatusCode();
-
-            // Read JSON file
-            using var stream = await response.Content.ReadAsStreamAsync();
+    // GET all projects
+    using (var response = await httpClient.GetAsync(projectsUrl)){
+    
+        response.EnsureSuccessStatusCode();
        
-            var tasklistsResponse = await JsonSerializer.DeserializeAsync<TaskListsResponse>(stream);
+        using var stream = await response.Content.ReadAsStreamAsync();
 
-            if(tasklistsResponse?.TasksLists == null){
+        var projectsResponse = await JsonSerializer.DeserializeAsync<ProjectsResponse>(stream);
 
-                Console.WriteLine($"No task lists found.");
-                continue;
-            }
-
-            foreach (var task in tasklistsResponse.TasksLists)
-            {
-                string? id = task.Id;
-                topLevelTasklistId.Add(id);
-                Console.WriteLine($"Top level Task found {id}");
-            }
-        }
-
-        // Loop through each task list Id's and fetch data
-        foreach (var tasklistId in topLevelTasklistId)
+        if (projectsResponse?.Projects == null)
         {
-            // Build string 
-            string tasksUrl = $"{baseUrl}" + $"/projects/api/v3/tasklists/{tasklistId}/tasks.json";
+            Console.WriteLine("No projects found.");
+            return;
+        }
 
-            using var response = await httpClient.GetAsync(tasksUrl);
-            response.EnsureSuccessStatusCode();
+        foreach (var project in projectsResponse.Projects)
+        {
+            int id = project.Id;
+            //string? name = project.Name;
+            projectsIds.Add(id);
+        }
+        
+    }
 
-            // Read JSON file
-            using var stream = await response.Content.ReadAsStreamAsync();
+    foreach (var project in projectsIds)
+    {    
+        string workingOnTaskUrl = $"{baseUrl}/projects/api/v3/projects/{project}/tasks.json?tagIds=145044";
 
-            var TasksResponse = await JsonSerializer.DeserializeAsync<TasksResponse>(stream);
+        // GET all working tasks per project
+        using var response = await httpClient.GetAsync(workingOnTaskUrl);
 
-            if (TasksResponse?.Tasks == null)
-            {
-                Console.WriteLine($"No tasks found.");
-                continue;
-            }
+        response.EnsureSuccessStatusCode();
 
-            foreach (var task in TasksResponse.Tasks)
-            {
-                string taskName = task.Name;
-                string taskPriority = task.Priority;
-                Console.WriteLine($"Task: {taskName}, priority: {taskPriority}");
+        using var stream = await response.Content.ReadAsStreamAsync();
 
-                //    // Optional: subtasks
-                //    //if (task.TryGetProperty("subtasks", out JsonElement subtasks))
-                //    //{
-                //    //    foreach (var subtask in subtasks.EnumerateArray())
-                //    //    {
-                //    //        string subtaskName = subtask.GetProperty("content").GetString();
-                //    //        Console.WriteLine($"  Subtask: {subtaskName}");
-                //    //    }
-                //    //}
-                //}
-            }
+        // ENSURE ALL PAGES ARE LOADED AS DEFAULT IS TO 50 ON EACH REQUEST
+        var workingOnTasksResponse = await JsonSerializer.DeserializeAsync<WorkingOnTaskResponse>(stream);
 
+        if (workingOnTasksResponse?.Tasks == null)
+        {
+            Console.WriteLine("No projects found.");
+            continue;
+        }
+
+        foreach (var task in workingOnTasksResponse.Tasks)
+        {
+            int? id = task.Id;
+            string? name = task.Name;
+            string? priority = task.Priority;
+            int? progress = task.Progress;
+            string startDate = task.StartDate;
+            string dueDate = task.DueDate;
+
+            Console.WriteLine($"Task id: {id}, name: {name}, priority: {priority}, progress: {progress}, start date: {startDate}, due date: {dueDate}");
         }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine("Error: " + ex.Message);
-        throw;
-    }
+
 }
+catch (Exception ex)
+{
+    Console.WriteLine("Error: " + ex.Message);
+}
+
 Console.ReadLine();
