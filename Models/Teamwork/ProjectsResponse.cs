@@ -1,0 +1,19 @@
+﻿using System.Text.Json.Serialization;
+
+namespace TeamworkWeeklyReport.Models.Teamwork
+{
+    // All projects
+    public class ProjectsResponse
+    {
+        [JsonPropertyName("projects")]
+        public List<Projects> Projects { get; set; } = new();
+    }
+    public class Projects
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+    }
+}

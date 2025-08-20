@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using TeamworkWeeklyReport.Models;
+using TeamworkWeeklyReport.Models.Shared;
 
 namespace TeamworkWeeklyReport.Services
 {
