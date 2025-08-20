@@ -1,5 +1,4 @@
-﻿
-namespace TeamworkWeeklyReport.Models
+﻿namespace TeamworkWeeklyReport.Models.Shared
 {
     public class AppSettings
     {
@@ -11,7 +10,7 @@ namespace TeamworkWeeklyReport.Models
     public class TeamworkConfig
     {
         public string BaseUrl { get; set; }
-        public List<long> ProjectsIds { get; set; }
+        //public List<long> ProjectsIds { get; set; }
     }
 
     public class UsersConfig
