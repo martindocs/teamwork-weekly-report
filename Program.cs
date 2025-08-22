@@ -26,6 +26,7 @@ BasicAuth.SetTeamworkBasicAuth(teamworkPassword, apiToken, httpClient);
 
 try
 {
+
     var activeProjectsCountRequest = new ActiveProjects(httpClient);
     int activeProjectsCount = await activeProjectsCountRequest.TotalActiveProjects(baseUrl);
 
@@ -34,12 +35,15 @@ try
 
     var workingOnTasksRequest = new WorkingOnTasks(httpClient, totalProjects);
     var workingOnTasks = await workingOnTasksRequest.TotalWorkingOnTasks(baseUrl);
-    
+
     // TEST
     foreach (var item in workingOnTasks)
     {
-        Console.WriteLine(item.Name);
-    }    
+        if (item.UserComment != null)
+        {
+            Console.WriteLine(item.Name);
+        }
+    }
 
 }
 catch(HttpRequestException ex){
