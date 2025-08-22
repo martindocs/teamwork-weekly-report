@@ -11,11 +11,11 @@ namespace TeamworkWeeklyReport.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<long>> TotalProjects(string baseUrl, int activeProjects){
+        public async Task<List<Projects>> TotalProjects(string baseUrl, int activeProjects){
 
             string projectsUrl = $"{baseUrl}/projects/api/v3/projects.json?pageSize={activeProjects}";
             // List of Projects Id's
-            List<long> projectsIds = new List<long>();
+            List<Projects> projectsDetails = new List<Projects>();
 
             try
             {
@@ -34,12 +34,24 @@ namespace TeamworkWeeklyReport.Services
                         return null;
                     }
 
+                    // Select Id and Name 
+                    var projectOwner = ConfigManager.Settings.Users.Select(user => new { user.Id, user.Name }).ToDictionary(user => user.Id, user => user.Name);// list of objects
+
+
                     foreach (var project in projectsResponse.Projects)
-                    {                    
-                        projectsIds.Add(project.Id);
+                    {    
+                        
+                        projectOwner.TryGetValue(project.ProjectOwnerId, out var ProjectOwnerName);
+
+                        projectsDetails.Add(new Projects{
+                            Id = project.Id,
+                            Name = project.Name,
+                            ProjectOwnerId = project.ProjectOwnerId,
+                            ProjectOwnerName = ProjectOwnerName
+                        });
                     }
                 
-                    return projectsIds;
+                    return projectsDetails;
                 }
             }
             catch (HttpRequestException ex)

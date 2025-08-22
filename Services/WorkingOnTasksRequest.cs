@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using System.Threading.Tasks;
+using TeamworkWeeklReport.Utils;
 using TeamworkWeeklyReport.Models.Teamwork;
 
 namespace TeamworkWeeklyReport.Services
@@ -7,13 +9,14 @@ namespace TeamworkWeeklyReport.Services
     public class WorkingOnTasks{
     
         private readonly HttpClient _httpClient;
-        private readonly List<long> _allTasks;
-        private const string WorkingOnTag = "?tagIds=145044";
+        private readonly List<Projects> _allProjects;
+        private const string WorkingOnTagId = "145044";
+        private const string IncludeLastComment = "include=comments";
 
-        public WorkingOnTasks(HttpClient httpClient, List<long> allTasks)
+        public WorkingOnTasks(HttpClient httpClient, List<Projects> allProjects)
         {
             _httpClient = httpClient;
-            _allTasks = allTasks;
+            _allProjects = allProjects;
         }
 
         public async Task<List<Tasks>> TotalWorkingOnTasks(string baseUrl){
@@ -22,10 +25,10 @@ namespace TeamworkWeeklyReport.Services
 
             try
             {
-                foreach (var project in _allTasks)
+                foreach (var project in _allProjects)
                 {
-                    string workingOnTaskUrl = $"{baseUrl}/projects/api/v3/projects/{project}/tasks.json{WorkingOnTag}";
-
+                    string workingOnTaskUrl = $"{baseUrl}/projects/api/v3/projects/{project.Id}/tasks.json?tagIds={WorkingOnTagId}&{IncludeLastComment}";
+                    
                     // GET all working tasks per project
                     using var response = await _httpClient.GetAsync(workingOnTaskUrl);
 
@@ -41,23 +44,31 @@ namespace TeamworkWeeklyReport.Services
                         Console.WriteLine("No projects found.");
                         continue;
                     }
+
+                    // Create dictionary that have ids of corresponding taskIds
+                    var latestComment = workingOnTaskResponse.taskComments.comment.Values.ToDictionary(commentId => commentId.CommentId, commentValue => commentValue.TaskLastComment);
+                    
+                    
+                   
                     foreach (var task in workingOnTaskResponse.Tasks)
                     {
-                        int id = task.Id;
+                        int taskId = task.Id;
                         string name = task.Name;
-                        string priority = task.Priority;
                         int progress = task.Progress;
                         string startDate = task.StartDate;
                         string dueDate = task.DueDate;
 
+                        // Fast lookup, compare taskIds with comments Ids. If match return as text in not return null
+                        latestComment.TryGetValue(taskId, out var commentText);
+                        
                         allWorkingtasks.Add(new Tasks
                         {
-                            Id = id,
+                            Id = taskId,
                             Name = name,
-                            Priority = priority,
                             Progress = progress,
                             StartDate = startDate,
-                            DueDate = dueDate
+                            DueDate = dueDate,
+                            UserComment = RemoveTags.TagRemover(commentText), // will be null if not found
                         });
                     }
                 }
