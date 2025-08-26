@@ -7,15 +7,12 @@ namespace TeamworkWeeklyReport.Models.Teamwork
     {
         [JsonPropertyName("tasks")]
         public List<Tasks> Tasks { get; set; } = new();
-
-        [JsonPropertyName("included")]
-        public TaskComments taskComments { get; set; }
     }
 
     public class Tasks // can be used to return object
     {
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -29,20 +26,8 @@ namespace TeamworkWeeklyReport.Models.Teamwork
         [JsonPropertyName("progress")]
         public int Progress { get; set; }
 
-        public string UserComment { get; set; }
-    }
+        public long ProjectId { get; set; }
 
-    public class TaskComments{
-        [JsonPropertyName("comments")]
-        public Dictionary<string, Comment> comment { get; set; } = new();
-    }
-
-    public class Comment { 
-        [JsonPropertyName("objectId")]
-        public int CommentId { get; set; }
-
-        [JsonPropertyName("title")]
-        public string TaskLastComment { get; set; }
-    
+        public long ProjectOwnerId { get; set; }
     }
 }

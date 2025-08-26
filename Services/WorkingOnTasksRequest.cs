@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
-using TeamworkWeeklReport.Utils;
+//using TeamworkWeeklyReport.Utils;
 using TeamworkWeeklyReport.Models.Teamwork;
 
 namespace TeamworkWeeklyReport.Services
@@ -11,7 +11,6 @@ namespace TeamworkWeeklyReport.Services
         private readonly HttpClient _httpClient;
         private readonly List<Projects> _allProjects;
         private const string WorkingOnTagId = "145044";
-        private const string IncludeLastComment = "include=comments";
 
         public WorkingOnTasks(HttpClient httpClient, List<Projects> allProjects)
         {
@@ -27,7 +26,7 @@ namespace TeamworkWeeklyReport.Services
             {
                 foreach (var project in _allProjects)
                 {
-                    string workingOnTaskUrl = $"{baseUrl}/projects/api/v3/projects/{project.Id}/tasks.json?tagIds={WorkingOnTagId}&{IncludeLastComment}";
+                    string workingOnTaskUrl = $"{baseUrl}/projects/api/v3/projects/{project.Id}/tasks.json?tagIds={WorkingOnTagId}";
                     
                     // GET all working tasks per project
                     using var response = await _httpClient.GetAsync(workingOnTaskUrl);
@@ -44,23 +43,15 @@ namespace TeamworkWeeklyReport.Services
                         Console.WriteLine("No projects found.");
                         continue;
                     }
-
-                    // Create dictionary that have ids of corresponding taskIds
-                    var latestComment = workingOnTaskResponse.taskComments.comment.Values.ToDictionary(commentId => commentId.CommentId, commentValue => commentValue.TaskLastComment);
-                    
-                    
-                   
+                                       
                     foreach (var task in workingOnTaskResponse.Tasks)
                     {
-                        int taskId = task.Id;
+                        long taskId = task.Id;
                         string name = task.Name;
                         int progress = task.Progress;
                         string startDate = task.StartDate;
                         string dueDate = task.DueDate;
-
-                        // Fast lookup, compare taskIds with comments Ids. If match return as text in not return null
-                        latestComment.TryGetValue(taskId, out var commentText);
-                        
+                                                
                         allWorkingtasks.Add(new Tasks
                         {
                             Id = taskId,
@@ -68,7 +59,8 @@ namespace TeamworkWeeklyReport.Services
                             Progress = progress,
                             StartDate = startDate,
                             DueDate = dueDate,
-                            UserComment = RemoveTags.TagRemover(commentText), // will be null if not found
+                            ProjectId = project.Id,
+                            ProjectOwnerId = project.ProjectOwnerId
                         });
                     }
                 }
