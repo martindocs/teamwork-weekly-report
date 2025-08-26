@@ -36,14 +36,12 @@ try
     var workingOnTasksRequest = new WorkingOnTasks(httpClient, totalProjects);
     var workingOnTasks = await workingOnTasksRequest.TotalWorkingOnTasks(baseUrl);
 
-    // TEST
-    foreach (var item in workingOnTasks)
-    {
-        if (item.UserComment != null)
-        {
-            Console.WriteLine(item.Name);
-        }
-    }
+    var projectsIds = totalProjects.Select(project => project.Id).ToList();
+
+    var groupTasks = new GroupTasks(workingOnTasks);
+    var groupUserTasks = groupTasks.GroupUserTasks(projectsIds);
+   
+    // SAVE TO EXCEL
 
 }
 catch(HttpRequestException ex){

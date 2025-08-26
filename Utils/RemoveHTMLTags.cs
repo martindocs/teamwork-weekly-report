@@ -1,7 +1,7 @@
 ﻿
 using System.Text.RegularExpressions;
 
-namespace TeamworkWeeklReport.Utils
+namespace TeamworkWeeklyReport.Utils
 {
     public static class RemoveTags{
     

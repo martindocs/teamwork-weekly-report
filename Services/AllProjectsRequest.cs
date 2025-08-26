@@ -34,13 +34,12 @@ namespace TeamworkWeeklyReport.Services
                         return null;
                     }
 
-                    // Select Id and Name 
-                    var projectOwner = ConfigManager.Settings.Users.Select(user => new { user.Id, user.Name }).ToDictionary(user => user.Id, user => user.Name);// list of objects
-
+                    // Select Id and Name and create dictionary with user ids and their names
+                    var projectOwner = ConfigManager.Settings.Users.Select(user => new { user.Id, user.Name }).ToDictionary(user => user.Id, user => user.Name);
 
                     foreach (var project in projectsResponse.Projects)
-                    {    
-                        
+                    {
+                        // Fast lookup, compare project owner Ids with users Ids. If match return as text in not return null
                         projectOwner.TryGetValue(project.ProjectOwnerId, out var ProjectOwnerName);
 
                         projectsDetails.Add(new Projects{
