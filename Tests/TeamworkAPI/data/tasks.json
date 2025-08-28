@@ -1,0 +1,56 @@
+[
+  {
+    "id": 36957148,
+    "name": "Finalize Mini / Midi / Maxi / Major Top Level Assemblies",
+    "startDate": "2025-04-28T00:00:00Z",
+    "dueDate": "2025-08-29T00:00:00Z",
+    "progress": 90,
+    "ProjectId": 698879,
+    "ProjectOwnerId": 489850
+  },
+  {
+    "id": 37076919,
+    "name": "CAD Files - Box design for all products",
+    "startDate": "2025-07-18T00:00:00Z",
+    "dueDate": "2025-08-29T00:00:00Z",
+    "progress": 90,
+    "ProjectId": 698879,
+    "ProjectOwnerId": 489850
+  },
+  {
+    "id": 37080927,
+    "name": "Box Design",
+    "startDate": "2025-07-29T00:00:00Z",
+    "dueDate": "2025-09-05T00:00:00Z",
+    "progress": 90,
+    "ProjectId": 698879,
+    "ProjectOwnerId": 489850
+  },
+  {
+    "id": 37110105,
+    "name": "Box Inserts",
+    "startDate": "2025-08-26T00:00:00Z",
+    "dueDate": "2025-09-05T00:00:00Z",
+    "progress": 90,
+    "ProjectId": 698879,
+    "ProjectOwnerId": 489850
+  },
+  {
+    "id": 37118090,
+    "name": "Test task",
+    "startDate": "2025-08-18T00:00:00Z",
+    "dueDate": "2025-08-22T00:00:00Z",
+    "progress": 20,
+    "ProjectId": 703654,
+    "ProjectOwnerId": 491629
+  },
+  {
+    "id": 37108532,
+    "name": "Multifit Regular - custom dimensions",
+    "startDate": null,
+    "dueDate": null,
+    "progress": 0,
+    "ProjectId": 703654,
+    "ProjectOwnerId": 491629
+  }
+]

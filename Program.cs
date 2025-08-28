@@ -1,6 +1,7 @@
 ﻿
 using TeamworkWeeklyReport.Services;
 using TeamworkWeeklyReport.Utils;
+using TeamworkWeeklyReport.Tests.TeamworkAPI;
 
 // Load baseUrl and Api key/ Teamwork password
 string baseUrl = ConfigManager.Settings.Teamwork.BaseUrl;
@@ -27,29 +28,43 @@ BasicAuth.SetTeamworkBasicAuth(teamworkPassword, apiToken, httpClient);
 try
 {
 
-    var activeProjectsCountRequest = new ActiveProjects(httpClient);
-    int activeProjectsCount = await activeProjectsCountRequest.TotalActiveProjects(baseUrl);
+    //var activeProjectsCountRequest = new ActiveProjects(httpClient);
+    //int activeProjectsCount = await activeProjectsCountRequest.TotalActiveProjects(baseUrl);
 
-    var totalProjectsRequest = new AllProjects(httpClient);
-    var totalProjects = await totalProjectsRequest.TotalProjects(baseUrl, activeProjectsCount);
+    //var totalProjectsRequest = new AllProjects(httpClient);
+    //var totalProjects = await totalProjectsRequest.TotalProjects(baseUrl, activeProjectsCount);
 
-    var workingOnTasksRequest = new WorkingOnTasks(httpClient, totalProjects);
-    var workingOnTasks = await workingOnTasksRequest.TotalWorkingOnTasks(baseUrl);
+    //var workingOnTasksRequest = new WorkingOnTasks(httpClient, totalProjects);
+    //var workingOnTasks = await workingOnTasksRequest.TotalWorkingOnTasks(baseUrl);
 
-    var projectsIds = totalProjects.Select(project => project.Id).ToList();
+    //var projectsIds = totalProjects.Select(project => project.Id).ToList();
 
+    //var groupTasks = new GroupTasks(workingOnTasks);
+    //var groupUserTasks = groupTasks.GroupUserTasks(projectsIds);
+
+
+    // TODO: DUMMY TEAMWORK API
+    //int activeProjectsCount = 56;
+    var apiRequest = new DummyApiRequests();
+    //var totalProjects = apiRequest.GetActiveProjects();
+    var workingOnTasks = apiRequest.GetProjectsTasks();
+    var projectsIds = apiRequest.GetActiveProjectsIds(); ;
+    
     var groupTasks = new GroupTasks(workingOnTasks);
     var groupUserTasks = groupTasks.GroupUserTasks(projectsIds);
-   
-    // SAVE TO EXCEL
+    //foreach (var item in groupUserTasks)
+    //{
+    //    Console.WriteLine(item.Key);
+    //}
+
 
 }
-catch(HttpRequestException ex){
+catch (HttpRequestException ex){
     Console.WriteLine("Api Error: " + ex.Message);
 }
 catch (Exception ex)
 {
-    Console.WriteLine("Error: " + ex.Message);
+    Console.WriteLine("General Error: " + ex.Message);
 }
 
 Console.ReadLine();

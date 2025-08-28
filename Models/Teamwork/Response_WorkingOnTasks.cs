@@ -3,7 +3,7 @@
 namespace TeamworkWeeklyReport.Models.Teamwork
 {
     // Working on tasks
-    public class WorkingOnTaskResponse // only needed when deserializing the response
+    public class Response_WorkingOnTasks // only needed when deserializing the response
     {
         [JsonPropertyName("tasks")]
         public List<Tasks> Tasks { get; set; } = new();

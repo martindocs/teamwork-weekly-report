@@ -25,7 +25,7 @@ namespace TeamworkWeeklyReport.Services
                     // "using" avoids loading the entire response into memory as a string first.
                     using var stream = await response.Content.ReadAsStreamAsync();
 
-                    var projectsStatsResponse = await JsonSerializer.DeserializeAsync<ProjectsStatsResponse>(stream);
+                    var projectsStatsResponse = await JsonSerializer.DeserializeAsync<Response_ActiveProjects>(stream);
 
                     if (projectsStatsResponse?.Data == null)
                     {
