@@ -1,7 +1,7 @@
 [
   {
     "id": 36957148,
-    "name": "Finalize Mini / Midi / Maxi / Major Top Level Assemblies",
+    "name": "Top Level Assemblies",
     "startDate": "2025-04-28T00:00:00Z",
     "dueDate": "2025-08-29T00:00:00Z",
     "progress": 90,
@@ -10,7 +10,7 @@
   },
   {
     "id": 37076919,
-    "name": "CAD Files - Box design for all products",
+    "name": "CAD Files",
     "startDate": "2025-07-18T00:00:00Z",
     "dueDate": "2025-08-29T00:00:00Z",
     "progress": 90,
@@ -46,7 +46,7 @@
   },
   {
     "id": 37108532,
-    "name": "Multifit Regular - custom dimensions",
+    "name": "Sling custom dimensions",
     "startDate": null,
     "dueDate": null,
     "progress": 0,
