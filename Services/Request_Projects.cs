@@ -26,7 +26,7 @@ namespace TeamworkWeeklyReport.Services
                
                     using var stream = await response.Content.ReadAsStreamAsync();
               
-                    var projectsResponse = await JsonSerializer.DeserializeAsync<ProjectsResponse>(stream);
+                    var projectsResponse = await JsonSerializer.DeserializeAsync<Response_Projects>(stream);
 
                     if (projectsResponse?.Projects == null)
                     {

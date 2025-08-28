@@ -3,7 +3,7 @@
 namespace TeamworkWeeklyReport.Models.Teamwork
 {
     // All projects
-    public class ProjectsResponse
+    public class Response_Projects
     {
         [JsonPropertyName("projects")]
         public List<Projects> Projects { get; set; } = new();

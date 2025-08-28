@@ -36,7 +36,7 @@ namespace TeamworkWeeklyReport.Services
                     using var stream = await response.Content.ReadAsStreamAsync();
 
                     // ENSURE ALL PAGES ARE LOADED AS DEFAULT IS TO 50 ON EACH REQUEST
-                    var workingOnTaskResponse = await JsonSerializer.DeserializeAsync<WorkingOnTaskResponse>(stream);
+                    var workingOnTaskResponse = await JsonSerializer.DeserializeAsync<Response_WorkingOnTasks>(stream);
 
                     if (workingOnTaskResponse?.Tasks == null)
                     {
@@ -65,6 +65,12 @@ namespace TeamworkWeeklyReport.Services
                     }
                 }
 
+                // Use for copying for local dummy data
+                //var localDummyData = JsonSerializer.Serialize(
+                //    allWorkingtasks, 
+                //    new JsonSerializerOptions { WriteIndented = true }
+                //    );
+               
                 return allWorkingtasks;
             }
             catch (Exception)
