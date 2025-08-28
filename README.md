@@ -120,7 +120,7 @@ This project is licensed under the MIT License.
 
 Disclaimer: This software is provided "as is", without warranty of any kind. The author is not liable for any damages or issues caused by the use of this tool. Use at your own risk.
 
-See LICENSE
+See [LICENSE](LICENSE)
  for details.
 
 ## Status
