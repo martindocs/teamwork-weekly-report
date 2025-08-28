@@ -1,10 +1,12 @@
 # Teamwork Weekly Task Report Automation
 
-> **C# console application** that pulls weekly task data from Teamwork and generates an automated CSV report, updated every 10 minutes via Windows Task Scheduler.
+> C# console application that interacts with the Teamwork API to generate automated CSV reports summarizing tasks for the current week.
 
 ## Overview
 
-This tool connects to the **Teamwork project management API**, retrieves tasks assigned to people for the **current week**, and saves a summary in CSV format. This report can be opened in Excel and provides managers with a quick overview of what team members are working on — without needing to dig into Teamwork manually.
+This project is a personal tool built as a coding exercise to automate weekly task reporting using the Teamwork.com project management API.
+
+It connects to Teamwork, retrieves task data, and outputs a structured .csv file summarizing current week's tasks — ready to open in Excel. The tool can be automated to run periodically using Windows Task Scheduler.
 
 ## Features
 
@@ -42,7 +44,7 @@ teamwork-weekly-report/
    - Task title
    - Due date
    - Status
-5. **Automatically runs every 10 minutes** using Task Scheduler
+5. **Can be scheduled to run automatically every 10 minutes** using Windows Task Scheduler.
 
 ## Setup Instructions
 ### 1. Clone the Project
@@ -67,7 +69,7 @@ cd teamwork-weekly-report
 dotnet run
 ```
 
-## Schedule It to Run Automatically
+## (Optional) Schedule It to Run Automatically
 ### 1. Build the app
 ```bash
 dotnet publish -c Release
@@ -104,6 +106,24 @@ dotnet publish -c Release
 
 - Add per-user summaries or charts
 
+## Security & Privacy
+
+* No sensitive credentials are included in this repo.
+
+* API keys and secrets are handled via environment variables or local config files and never committed.
+
+* Sample data and task identifiers are sanitized and generic. No private project data is stored or exposed.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+Disclaimer: This software is provided "as is", without warranty of any kind. The author is not liable for any damages or issues caused by the use of this tool. Use at your own risk.
+
+See LICENSE
+ for details.
+
 ## Status
-✅ In Use at Work
-📅 Last Updated: August 2025
+🟢 Maintained as a personal portfolio project
+
+📅 Last updated: August 2025
