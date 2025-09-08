@@ -9,7 +9,6 @@ namespace TeamworkWeeklyReport.Services
         {
             _tasks = tasks;
         }
-
         public Dictionary<long, List<Tasks>> GroupUserTasks(List<long> projectsIds){
             return _tasks
                 .Where(task => projectsIds.Contains(task.ProjectId))

@@ -17,6 +17,7 @@ namespace TeamworkWeeklyReport.Models.Teamwork
         public string Name { get; set; }
 
         [JsonPropertyName("ownedBy")]
+
         public int ProjectOwnerId { get; set; }
 
         public string ProjectOwnerName { get; set; }
