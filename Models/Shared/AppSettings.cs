@@ -10,7 +10,6 @@
     public class TeamworkConfig
     {
         public string BaseUrl { get; set; }
-        //public List<long> ProjectsIds { get; set; }
     }
 
     public class UsersConfig

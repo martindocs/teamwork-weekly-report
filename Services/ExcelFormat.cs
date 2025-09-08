@@ -1,35 +1,9 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Wordprocessing;
 using TeamworkWeeklyReport.Models.Teamwork;
-using TeamworkWeeklyReport.Services;
 using TeamworkWeeklyReport.Utils;
 using TeamworkWeeklyReport.Models.App;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Color = System.Drawing.Color;
 using System.Globalization;
-
-/*
-    * loop over each dictionary object, where Dictionary<long, List<Tasks> tasks> 
-    * display each object in excel table as:
-    - dynamic worksheets title "DD-DD MM / Week number"
-        -- under Title in row:
-        --- with cell "Project name" (merged depend of qty of tasks), 
-        --- list of all "Task", 
-        --- project "Owner" name, 
-        --- "Due Date", additional:
-            ---- utils method to color code due date
-                            
-        --- "Progress [%]" as text
-                    
-    * add legend by the table:
-    - yellow as Tomorrow
-    - green as Today
-    - red as Past Due Date
-
-    * under Table "Anual Leave"
-                                   
-                 
-*/
 
 namespace TeamworkWeeklyReport.Services
 {
