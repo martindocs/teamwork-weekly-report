@@ -1,13 +1,13 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace TeamworkWeeklyReport.Utils
 {
-    public static class RemoveTags{
-    
-        public static string TagRemover(string tag){
-
-            if (!string.IsNullOrEmpty(tag)) {
+    public static class RemoveTags
+    {
+        public static string TagRemover(string tag)
+        {
+            if (!string.IsNullOrEmpty(tag))
+            {
                 return Regex.Replace(tag, "<.*?>", string.Empty);
                 // < — match the opening angle bracket.
                 // .*? — match any characters, . means any character, * means zero or more times,
@@ -16,6 +16,5 @@ namespace TeamworkWeeklyReport.Utils
 
             return null;
         }
-        
     }
 }
