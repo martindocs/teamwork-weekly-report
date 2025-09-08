@@ -48,10 +48,9 @@ namespace TeamworkWeeklyReport.Services
                     {
                         long taskId = task.Id;
                         string name = task.Name;
-                        int progress = task.Progress;
+                        int progress = task.Progress;                        
                         string startDate = task.StartDate;
                         string dueDate = task.DueDate;
-                                                
                         allWorkingtasks.Add(new Tasks
                         {
                             Id = taskId,
@@ -60,17 +59,19 @@ namespace TeamworkWeeklyReport.Services
                             StartDate = startDate,
                             DueDate = dueDate,
                             ProjectId = project.Id,
-                            ProjectOwnerId = project.ProjectOwnerId
+                            ProjectOwnerId = project.ProjectOwnerId,
+                            ProjectName = project.Name,                            
                         });
                     }
                 }
 
                 // Use for copying for local dummy data
                 //var localDummyData = JsonSerializer.Serialize(
-                //    allWorkingtasks, 
+                //    allWorkingtasks,
                 //    new JsonSerializerOptions { WriteIndented = true }
                 //    );
-               
+                //Console.WriteLine(localDummyData);
+
                 return allWorkingtasks;
             }
             catch (Exception)

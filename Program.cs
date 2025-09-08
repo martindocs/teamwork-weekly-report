@@ -27,7 +27,6 @@ BasicAuth.SetTeamworkBasicAuth(teamworkPassword, apiToken, httpClient);
 
 try
 {
-
     //var activeProjectsCountRequest = new ActiveProjects(httpClient);
     //int activeProjectsCount = await activeProjectsCountRequest.TotalActiveProjects(baseUrl);
 
@@ -44,12 +43,10 @@ try
 
 
     // TODO: DUMMY TEAMWORK API
-    //int activeProjectsCount = 56;
-    var apiRequest = new DummyApiRequests();
-    //var totalProjects = apiRequest.GetActiveProjects();
-    var workingOnTasks = apiRequest.GetProjectsTasks();
-    var projectsIds = apiRequest.GetActiveProjectsIds(); ;
-    
+    var dummyAPIRequest = new Requests_DummyAPI();
+    var workingOnTasks = dummyAPIRequest.GetProjectsTasks();
+    var projectsIds = dummyAPIRequest.GetActiveProjectsIds(); ;
+
     var groupTasks = new GroupTasks(workingOnTasks);
     var groupUserTasks = groupTasks.GroupUserTasks(projectsIds);
     //foreach (var item in groupUserTasks)
@@ -57,6 +54,10 @@ try
     //    Console.WriteLine(item.Key);
     //}
 
+    // SAVE TO EXCEL
+    var excel = new ExcelFormat(groupUserTasks);
+    excel.CreateExcelTable();
+    
 
 }
 catch (HttpRequestException ex){
