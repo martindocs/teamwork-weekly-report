@@ -29,5 +29,7 @@ namespace TeamworkWeeklyReport.Models.Teamwork
         public long ProjectId { get; set; }
 
         public long ProjectOwnerId { get; set; }
+
+        public string ProjectName { get; set; }
     }
 }

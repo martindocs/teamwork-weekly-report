@@ -4,7 +4,7 @@ using TeamworkWeeklyReport.Models.Teamwork;
 
 namespace TeamworkWeeklyReport.Tests.TeamworkAPI
 {
-    public class DummyApiRequests        
+    public class Requests_DummyAPI        
     {
         public List<long> GetActiveProjectsIds()
         {
