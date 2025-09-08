@@ -7,26 +7,30 @@ using System.Globalization;
 
 namespace TeamworkWeeklyReport.Services
 {
-    public class ExcelFormat
+    public class Excel_Table
     {
-        private readonly Dictionary<long, List<Tasks>> _projectOwnerIds;
+        private readonly Dictionary<long, List<Tasks>> _projectOwnerIds;     
+        private readonly Excel_TableColors _tableDueDateColors;
 
-        public ExcelFormat(Dictionary<long, List<Tasks>> projectOwnerIds)
+        public Excel_Table(Dictionary<long, List<Tasks>> projectOwnerIds, Excel_TableColors tableDueDateColors)
         {
             _projectOwnerIds = projectOwnerIds;
+            _tableDueDateColors = tableDueDateColors;
         }
 
-        public void CreateExcelTable()
+        public void CreateTable()
         {
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.Worksheets.Add("Week 36");
+                string currentWeek = WeekOfTheYear.CurrentWeek();
+
+                var worksheet = workbook.Worksheets.Add(currentWeek);
 
                 worksheet.Columns().Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 worksheet.Columns().Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
 
                 // Header
-                worksheet.Cell("B1").Value = $"18-22 Aug / Week {WeekOfYear()}";
+                worksheet.Cell("B1").Value = $"18-22 Aug / Week {currentWeek}";
                 worksheet.Row(1).Height = 30;
                 worksheet.Cell("B1").Style.Fill.BackgroundColor = XLColor.FromColor(Color.FromArgb(218, 233, 248));
                 worksheet.Cell("B1").Style.Font.FontSize = 14;
@@ -78,8 +82,8 @@ namespace TeamworkWeeklyReport.Services
 
                         // Due Date
                         if(cell.DueDate != null){
-                            var date = FormatDate(cell.DueDate);
-                            var dateColor = DueDate(date);
+                            var date = FormatDate.DateToUTC(cell.DueDate);
+                            var dateColor = _tableDueDateColors.DueDate(date);
                             worksheet.Cell(row, 5).Value = date;
                             worksheet.Cell(row, 5).Style.Fill.BackgroundColor = XLColor.FromColor(Color.FromArgb(
                                 dateColor.R, 
@@ -111,8 +115,6 @@ namespace TeamworkWeeklyReport.Services
                     usedRange.Cells().Style.Font.FontName = "Aptos Narrow Bold";
                 }
 
-                //worksheet.Rows().AdjustToContents();
-
                 worksheet.Column(2).Width = 25;
                 worksheet.Column(2).Style.Alignment.WrapText = true;
                 worksheet.Column(4).Width = 25;
@@ -122,7 +124,6 @@ namespace TeamworkWeeklyReport.Services
                 worksheet.SheetView.FreezeRows(2);
 
                 worksheet.Column(3).AdjustToContents();
-                //worksheet.Column(5).AdjustToContents();
                 worksheet.Column(5).Width = 12;
                 worksheet.Column(6).AdjustToContents();  
                 
@@ -132,42 +133,7 @@ namespace TeamworkWeeklyReport.Services
             }
 
         }
-
-        public int WeekOfYear(){
-            DateTime today = DateTime.Today;
-            return ISOWeek.GetWeekOfYear(today);
-        }
-
-        public DateTime FormatDate(string dueDate){
-            DateTime date = DateTime.Parse(dueDate, null, System.Globalization.DateTimeStyles.AdjustToUniversal);
-
-            return date;
-        }
-
-        public DueDateColors DueDate(DateTime date) {
-            
-            var colors = new List<DueDateColors>()
-            {
-                new DueDateColors{R = 218, G = 242, B = 208}, // green
-                new DueDateColors{R = 252, G = 223, B = 134}, // yellow
-                new DueDateColors{R = 255, G = 209, B = 209}, // red
-                new DueDateColors{R = 255, G = 255, B = 255} // no color
-            };
-            DateTime today = DateTime.Today;
-            DateTime tomorrow = DateTime.Today.AddDays(1);
-            DateTime yesterday = DateTime.Today.AddDays(-1);
-           
-            if(date == today){
-                return colors[0];
-            }else if (date == tomorrow){  
-                return colors[1];
-            } else if(date <= yesterday){
-                return colors[2];            
-            }else{
-                return colors[3];            
-            
-            }
-        }
+        
     }
 }
 

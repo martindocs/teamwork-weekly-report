@@ -27,36 +27,32 @@ BasicAuth.SetTeamworkBasicAuth(teamworkPassword, apiToken, httpClient);
 
 try
 {
-    //var activeProjectsCountRequest = new ActiveProjects(httpClient);
-    //int activeProjectsCount = await activeProjectsCountRequest.TotalActiveProjects(baseUrl);
+    var activeProjectsCountRequest = new ActiveProjects(httpClient);
+    int activeProjectsCount = await activeProjectsCountRequest.TotalActiveProjects(baseUrl);
 
-    //var totalProjectsRequest = new AllProjects(httpClient);
-    //var totalProjects = await totalProjectsRequest.TotalProjects(baseUrl, activeProjectsCount);
+    var totalProjectsRequest = new AllProjects(httpClient);
+    var totalProjects = await totalProjectsRequest.TotalProjects(baseUrl, activeProjectsCount);
 
-    //var workingOnTasksRequest = new WorkingOnTasks(httpClient, totalProjects);
-    //var workingOnTasks = await workingOnTasksRequest.TotalWorkingOnTasks(baseUrl);
+    var workingOnTasksRequest = new WorkingOnTasks(httpClient, totalProjects);
+    var workingOnTasks = await workingOnTasksRequest.TotalWorkingOnTasks(baseUrl);
 
-    //var projectsIds = totalProjects.Select(project => project.Id).ToList();
+    var projectsIds = totalProjects.Select(project => project.Id).ToList();
+
+    var groupTasks = new GroupTasks(workingOnTasks);
+    var groupUserTasks = groupTasks.GroupUserTasks(projectsIds);
+
+
+    // TODO: DUMMY TEAMWORK API
+    //var dummyAPIRequest = new Requests_DummyAPI();
+    //var workingOnTasks = dummyAPIRequest.GetProjectsTasks();
+    //var projectsIds = dummyAPIRequest.GetActiveProjectsIds(); ;
 
     //var groupTasks = new GroupTasks(workingOnTasks);
     //var groupUserTasks = groupTasks.GroupUserTasks(projectsIds);
 
-
-    // TODO: DUMMY TEAMWORK API
-    var dummyAPIRequest = new Requests_DummyAPI();
-    var workingOnTasks = dummyAPIRequest.GetProjectsTasks();
-    var projectsIds = dummyAPIRequest.GetActiveProjectsIds(); ;
-
-    var groupTasks = new GroupTasks(workingOnTasks);
-    var groupUserTasks = groupTasks.GroupUserTasks(projectsIds);
-    //foreach (var item in groupUserTasks)
-    //{
-    //    Console.WriteLine(item.Key);
-    //}
-
     // SAVE TO EXCEL
-    var excel = new ExcelFormat(groupUserTasks);
-    excel.CreateExcelTable();
+    var excel = new Excel_Table(groupUserTasks, new Excel_TableColors());
+    excel.CreateTable();
     
 
 }
