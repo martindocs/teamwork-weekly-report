@@ -1,37 +1,64 @@
 # Teamwork Weekly Task Report Automation
 
-> C# console application that interacts with the Teamwork API to generate automated CSV reports summarizing tasks for the current week.
+> C# console app built to help my team get clearer weekly updates from Teamwork.
 
 ## Overview
 
-This project is a personal tool built as a coding exercise to automate weekly task reporting using the Teamwork.com project management API.
+This project started with a simple idea: make it easier for my engineering team to see what everyone's working on. We were using [Teamwork.com](https://www.teamwork.com)
+, but with so many tasks flying around, it was hard for managers to get a clear weekly summary.
 
-It connects to Teamwork, retrieves task data, and outputs a structured .csv file summarizing current week's tasks — ready to open in Excel. The tool can be automated to run periodically using Windows Task Scheduler.
+I thought — why not build a little tool that automates all of this?
+
+I started by building a C# console app that:
+
+* Connects to the Teamwork API
+* Pulls task data
+* Filters out only the useful stuff (like tasks tagged working-on)
+* Saves it to a Excel `.xlsx` report
+
+The app worked great. It pulled the data, formatted it nicely, and could even run on a schedule using Windows Task Scheduler.
+
+But then I hit a wall.
+Our IT department flagged it as a security risk (no .exe files allowed on servers), so the project couldn’t go live internally.
+
+So I pivoted.
+
+Instead of dropping the idea, I rebuilt the report using Excel, with:
+
+* Power Query to pull and transform data
+* A clean and simple user interface
+* A few VBA macros for added functionality
+
+And it worked!
+The Excel version ended up being even more feature-rich, and I delivered it to the engineering team.
+
+So while the C# version became more of a portfolio project, the overall goal, making our task reporting clearer and easier was still achieved 💪
 
 ## Features
 
 - Pulls tasks using Teamwork REST API
-- Filters tasks by due date (this week's tasks)
-- Extracts task title, assignee, due date, and status
-- Saves to a readable `.csv` file
-- Automatically runs every 10 minutes (via Windows Task Scheduler)
+- Filters tasks by due date 
+- Extracts project name, task title, assignee, due date, and task progress
+- Saves to a readable `.xlsx` file
 
 ## Project Structure
 
 ```cbash
 teamwork-weekly-report/
-├── Interfaces/
-├── Models/             // Pure data (properties only)
-│   ├── TaskItem.cs
-│   ├── TeamworkUser.cs
-├── Services/           // Logic like API calls, file writing, etc.
-│   ├── TeamworkService.cs
-│   ├── CsvExporter.cs
-├── Output/             // Generated CSV files
-│ └── weekly_report.csv
-├── App.config          // Configuration: API key and Teamwork URL
-├── Program.cs          // Main logic
+├── Properties/                 // Local settings
+├── Models/                     // Pure data (properties only)
+│   ├── App/
+│   ├── Shared/
+│   ├── Teamwork/
+├── Output/                     // Generated Excel files 
+├── Services/                   // Logic like API calls, file writing, etc.
+├── Test/                       // Dummy test files
+├── Utils/                      // Resuable logic used across app
+├── appsettings.Template.json   // Configuration: API key and Teamwork URL
+├── LICENSE
+├── Program.cs                  // Main logic
 └── README.md
+
 ```
 
 ## How It Works
@@ -39,12 +66,12 @@ teamwork-weekly-report/
 1. **Reads configuration** (API key, Teamwork base URL)
 2. **Calls the Teamwork API** to fetch tasks
 3. **Filters tasks** to include only those due this week
-4. **Writes a CSV file** with:
+4. **Writes a Excel file** with:
+   - Project name
    - Person name
    - Task title
    - Due date
    - Status
-5. **Can be scheduled to run automatically every 10 minutes** using Windows Task Scheduler.
 
 ## Setup Instructions
 ### 1. Clone the Project
@@ -89,15 +116,11 @@ dotnet publish -c Release
 
 - Working with dates and time filtering
 
-- Generating CSV files in C#
-
-- Setting up Task Scheduler to automate a console app
+- Generating Excel files in C#
 
 - Structuring and documenting a real-world project
 
 ## Future Improvements
-- Write to .xlsx with formatting
-
 - Push reports to SharePoint or OneDrive
 
 - Send summary via email to stakeholders
@@ -126,4 +149,4 @@ See [LICENSE](LICENSE)
 ## Status
 🟢 Maintained as a personal portfolio project
 
-📅 Last updated: August 2025
+📅 Last updated: September 2025
